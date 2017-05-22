@@ -109,13 +109,17 @@ void ParticleFilter::prediction( double delta_t, double std_pos[], double veloci
 }
 
 //This function is not necessary
-//void ParticleFilter::dataAssociation( std::vector<LandmarkObs> &predicted, std::vector<LandmarkObs> &observations ) {
-//	// TODO: Find the predicted measurement that is closest to each observed measurement and assign the
-//	//   observed measurement to this particular landmark.
-//	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to
-//	//   implement this method and use it as a helper during the updateWeights phase.
-//
-//}
+void ParticleFilter::dataAssociation( std::vector<LandmarkObs> &predicted, std::vector<LandmarkObs> &observations ) {
+	// TODO: Find the predicted measurement that is closest to each observed measurement and assign the
+	//   observed measurement to this particular landmark.
+	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to
+	//   implement this method and use it as a helper during the updateWeights phase.
+
+	//UNUSED PARAMETERS
+	(void)predicted;
+	(void)observations;
+
+}
 
 void ParticleFilter::updateWeights( double sensor_range, double std_landmark[],
 									std::vector<LandmarkObs> observations, Map map_landmarks )
