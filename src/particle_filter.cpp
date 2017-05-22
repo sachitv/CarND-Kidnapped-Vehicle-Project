@@ -18,7 +18,17 @@
 static int const NUM_PARTICLES = 500;
 static double const INIT_WEIGHT = 1.f;
 
-double NormalizeAngleRadians( double angleInRadians )
+/*
+ * Computes the Squared Euclidean distance between two 2D points.
+ * @param (x1,y1) x and y coordinates of first point
+ * @param (x2,y2) x and y coordinates of second point
+ * @output Euclidean distance between two 2D points
+ */
+inline double dist2(double x1, double y1, double x2, double y2) {
+	return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+}
+
+inline double NormalizeAngleRadians( double angleInRadians )
 {
 	return remainder( angleInRadians, 2.0 * M_PI );
 }
@@ -109,7 +119,7 @@ void ParticleFilter::prediction( double delta_t, double std_pos[], double veloci
 }
 
 //This function is not necessary
-void ParticleFilter::dataAssociation( std::vector<LandmarkObs> &predicted, std::vector<LandmarkObs> &observations ) {
+void ParticleFilter::dataAssociation( std::vector<LandmarkObs> predicted, std::vector<LandmarkObs> &observations ) {
 	// TODO: Find the predicted measurement that is closest to each observed measurement and assign the
 	//   observed measurement to this particular landmark.
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to

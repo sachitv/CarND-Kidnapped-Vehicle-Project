@@ -37,21 +37,11 @@ struct ground_truth {
  * Struct representing one landmark observation measurement.
  */
 struct LandmarkObs {
+
 	int id;				// Id of matching landmark in the map.
 	double x;			// Local (vehicle coordinates) x position of landmark observation [m]
 	double y;			// Local (vehicle coordinates) y position of landmark observation [m]
 };
-
-
-/*
- * Computes the Squared Euclidean distance between two 2D points.
- * @param (x1,y1) x and y coordinates of first point
- * @param (x2,y2) x and y coordinates of second point
- * @output Euclidean distance between two 2D points
- */
-inline double dist2(double x1, double y1, double x2, double y2) {
-	return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
-}
 
 /*
  * Computes the Euclidean distance between two 2D points.
@@ -60,7 +50,7 @@ inline double dist2(double x1, double y1, double x2, double y2) {
  * @output Euclidean distance between two 2D points
  */
 inline double dist(double x1, double y1, double x2, double y2) {
-	return sqrt(dist2(x1,y1,x2,y2));
+	return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
 inline double * getError(double gt_x, double gt_y, double gt_theta, double pf_x, double pf_y, double pf_theta) {
