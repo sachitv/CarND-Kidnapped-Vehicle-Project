@@ -11,10 +11,11 @@
 #include <numeric>
 #include <math.h>
 #include <limits>
+#include <map>
 
 #include "particle_filter.h"
 
-static int const NUM_PARTICLES = 3;
+static int const NUM_PARTICLES = 500;
 static double const INIT_WEIGHT = 1.f;
 
 double NormalizeAngleRadians( double angleInRadians )
@@ -62,7 +63,7 @@ void ParticleFilter::init( double x, double y, double theta, double std[] )
 		particles.emplace_back( p );
 		weights.emplace_back( INIT_WEIGHT );
 
-		cout<<"Particle "<< p.id <<" initialized "<<p.x<<", "<<p.y<<endl;
+		//cout<<"Particle "<< p.id <<" initialized "<<p.x<<", "<<p.y<<endl;
 	}
 	is_initialized = true;
 }
@@ -103,7 +104,7 @@ void ParticleFilter::prediction( double delta_t, double std_pos[], double veloci
 		particle.theta += NormalizeAngleRadians( dist_theta( gen ));
 		NormalizeAngleRadians( particle.theta );
 
-		cout<<"Particle "<< particle.id <<" prediction "<<particle.x<<", "<<particle.y<<endl;
+		//cout<<"Particle "<< particle.id <<" prediction "<<particle.x<<", "<<particle.y<<endl;
 	}
 }
 
@@ -140,6 +141,9 @@ void ParticleFilter::updateWeights( double sensor_range, double std_landmark[],
 		double resultweight = 1.f;
 		particle.weight = 1.f;
 
+		map<Map::single_landmark_s const*, int> landmarkToDist;
+		map<Map::single_landmark_s const*, LandmarkObs> landmarkToObs;
+
 		//Check each observation
 		for ( auto const &observation : observations )
 		{
@@ -164,6 +168,28 @@ void ParticleFilter::updateWeights( double sensor_range, double std_landmark[],
 				}
 			}
 
+			if(landmarkToDist.find(bestLandmark) == landmarkToDist.end())
+			{
+				//Not Found, insert
+				landmarkToDist[bestLandmark] = dist2min;
+				landmarkToObs[bestLandmark] = txObs;
+			}
+			else
+			{
+				//Insert
+				if(landmarkToDist[bestLandmark] > dist2min)
+				{
+					landmarkToDist[bestLandmark] = dist2min;
+					landmarkToObs[bestLandmark] = txObs;
+				}
+			}
+		}
+
+		for(auto const& iter : landmarkToObs)
+		{
+			Map::single_landmark_s const * const bestLandmark = iter.first;
+			LandmarkObs const& txObs = iter.second;
+
 			//Calculate multivariate gaussian prob
 			double const p1 = 1.f / (2.f * M_PI * std_landmark[ 0 ] * std_landmark[ 1 ]);
 			double const p2 = -(
@@ -176,7 +202,7 @@ void ParticleFilter::updateWeights( double sensor_range, double std_landmark[],
 
 		particle.weight = resultweight;
 
-		cout<<"Particle "<< particle.id <<" final weight "<<particle.weight<<endl;
+		//cout<<"Particle "<< particle.id <<" final weight "<<particle.weight<<endl;
 
 		weights[ weightcounter ] = resultweight;
 		weightcounter++;
